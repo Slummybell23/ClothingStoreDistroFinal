@@ -36,7 +36,7 @@ public class UAClient {
             System.out.println("Sending Initialization to Servers...");
             clientToServer.println("INITIALIZE " + fittingRooms);
 
-            string initializationResponse = serverOutput.readLine();
+            String initializationResponse = serverOutput.readLine();
             System.out.println("");
 
             // CLients = fitting rooms + waiting room seats
