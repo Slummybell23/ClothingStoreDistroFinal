@@ -48,35 +48,36 @@ public class UACentralServer {
 
                 String line;
 
-                while((line = in.readLine()) != null) {
-                    System.out.printf("From Client: ");
-                    out.println(line);
+                while(true) {
+                    Thread.sleep(1000);
+                    if(in.ready()) {
+                        line = in.readLine();
+                        System.out.println("From Client: ");
+                        System.out.println(line);
 
-                    if(line.contains("INITIALIZE{")) {
-                        String str = line.replaceAll("[^0-9]", "");
-                        if(Integer.parseInt(str) > 0) {
-                            initialize(Integer.parseInt(str), out);
+                        if(line.contains("INITIALIZE")) {
+                            String str = line.replaceAll("[^0-9]", "");
+                            if(Integer.parseInt(str) > 0 && !serverList.isEmpty()) {
+                                initialize(Integer.parseInt(str), out);
+                            }
+
+                            out.println("INIT_SUCCESS");
+                        }
+
+                        if(line.contains("SERVER")) {
+                            serverList.add(clientSocket);
+                        }
+
+                        if(line.contains("CLIENT")) {
+                            clientList.add(clientSocket);
                         }
                     }
-
-                    if(line.contains("INIT_SUCCESS")) {
-                        out.println("INIT_SUCCESS");
-                    }
-
-                    if(line.contains("INIT_FAILED")) {
-                        out.println("INIT_FAILED");
-                    }
-
-                    if(line.contains("SERVER")) {
-                        serverList.add(clientSocket);
-                    }
-
-                    if(line.contains("CLIENT")) {
-                        clientList.add(clientSocket);
-                    }
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -84,7 +85,7 @@ public class UACentralServer {
             int roomsPerServ = nums/serverList.size();
             for(Socket servSock : serverList) {
                 try {
-                    out.println("INITIALIZE{" + roomsPerServ + "}");
+                    out.println("INITIALIZE " + roomsPerServ);
                 } catch(Exception e) {
                     System.out.println(e);
                 }
