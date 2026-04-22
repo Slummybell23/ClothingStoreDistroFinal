@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,27 +38,18 @@ public class UAClient {
             clientToServer.println("INITIALIZE " + fittingRooms);
 
             String initializationResponse = serverOutput.readLine();
-            System.out.println("");
+            System.out.println("Initialized.");
 
             // CLients = fitting rooms + waiting room seats
             int clients = fittingRooms + (fittingRooms*2);
 
+            Thread[] threads = new Thread[clients];
+            for (int i = 0; i < clients; i++) {
+                threads[i] = new Thread(new UAClientHandler(serverOutput, clientToServer));
 
-            // Request Fitting Room
-            String requestFittingRoomMsg = "REQUESTING_ROOM";
-            clientToServer.println(requestFittingRoomMsg);
-
-            String serverResponse = serverOutput.readLine();
-            if(serverResponse.equals("SUCCESS")) {
-                // Simulate trying on clothes for 5 seconds
-                Thread.sleep(5000);
-
-                String doneMsg = "EXITING_ROOM";
-                clientToServer.println(doneMsg);
-
-                serverResponse = serverOutput.readLine();
-                //Handle server response for exiting room
+                threads[i].start();
             }
+
 
         } catch (Exception e) {
 
@@ -65,4 +57,42 @@ public class UAClient {
         }
     }
 
+}
+
+class UAClientHandler implements Runnable{
+
+    BufferedReader ServerOutput;
+    PrintWriter ClientToServer;
+
+    public UAClientHandler(BufferedReader serverOutput, PrintWriter clientToServer) {
+        ServerOutput = serverOutput;
+        ClientToServer = clientToServer;
+    }
+
+    @Override
+    public void run() {
+        String requestFittingRoomMsg = "REQUESTING_ROOM";
+        ClientToServer.println(requestFittingRoomMsg);
+
+        try {
+            String serverResponse = ServerOutput.readLine();
+            if(serverResponse.equals("SUCCESS")) {
+                // Simulate trying on clothes for 5 seconds
+                Thread.sleep(5000);
+
+                String doneMsg = "EXITING_ROOM";
+                ClientToServer.println(doneMsg);
+
+                serverResponse = ServerOutput.readLine();
+                //Handle server response for exiting room
+            } else if(serverResponse.equals("WAITING")) {
+
+            } else if (serverResponse.equals("NO ROOM")) {
+
+            }
+        } catch (IOException | InterruptedException ex) {
+
+        }
+
+    }
 }
