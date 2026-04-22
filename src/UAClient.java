@@ -77,10 +77,11 @@ class UAClientHandler implements Runnable{
     PrintWriter ClientToServer;
 
     public UAClientHandler(Socket socket) throws IOException {
+        Socket = socket;
+
         BufferedReader serverOutput = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
         PrintWriter clientToServer = new PrintWriter(Socket.getOutputStream(), true);
 
-        Socket = socket;
         ServerOutput = serverOutput;
         ClientToServer = clientToServer;
     }
