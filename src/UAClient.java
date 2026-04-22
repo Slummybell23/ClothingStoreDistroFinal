@@ -23,8 +23,6 @@ public class UAClient {
         System.out.println("starting client");
 
         try {
-            Scanner scanner = new Scanner(System.in);
-
             Socket socket = new Socket(host, port);
 
             System.out.println("Built Socket");
@@ -52,7 +50,8 @@ public class UAClient {
 
             Thread[] threads = new Thread[clients];
             for (int i = 0; i < clients; i++) {
-                threads[i] = new Thread(new UAClientHandler(serverOutput, clientToServer));
+                Socket newSocket = new Socket(host, port);
+                threads[i] = new Thread(new UAClientHandler(newSocket));
             }
 
             for (int i = 0; i < threads.length; i++) {
@@ -73,16 +72,30 @@ public class UAClient {
 
 class UAClientHandler implements Runnable{
 
+    Socket Socket;
     BufferedReader ServerOutput;
     PrintWriter ClientToServer;
 
-    public UAClientHandler(BufferedReader serverOutput, PrintWriter clientToServer) {
+    public UAClientHandler(Socket socket) throws IOException {
+        BufferedReader serverOutput = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
+        PrintWriter clientToServer = new PrintWriter(Socket.getOutputStream(), true);
+
+        Socket = socket;
         ServerOutput = serverOutput;
         ClientToServer = clientToServer;
     }
 
     @Override
     public void run() {
+        String clientInitialization = "CLIENT";
+        ClientToServer.println(clientInitialization);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         String requestFittingRoomMsg = "FR_REQ";
         ClientToServer.println(requestFittingRoomMsg);
 

@@ -1,10 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class UACentralServer {
-    private Socket <String> clientList = new ArrayList();
-    private Socket <String> serverList = new ArrayList();
+    public static ArrayList<Socket> clientList = new ArrayList<Socket>();
+    public static ArrayList<Socket> serverList = new ArrayList<Socket>();
     
     public static void main(String [] args) {
 
@@ -30,10 +31,11 @@ public class UACentralServer {
 
     private static class ClientHandler implements Runnable {
         private final Socket clientSocket;
-        private final Socket clientIP = clientSocket.getInetAddress().getHostAddress();
+        private final String clientIP;
 
         public ClientHandler(Socket socket) {
             this.clientSocket = socket;
+            this.clientIP = clientSocket.getInetAddress().getHostAddress();
         }
 
         public void run() {
@@ -41,19 +43,19 @@ public class UACentralServer {
             BufferedReader in = null;
 
             try {
-                in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				out = new PrintWriter(s.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				out = new PrintWriter(clientSocket.getOutputStream(), true);
 
                 String line;
 
-                while((line = in.readLIne()) != null) {
+                while((line = in.readLine()) != null) {
                     System.out.printf("From Client: ");
                     out.println(line);
 
                     if(line.contains("INITIALIZE{")) {
                         String str = line.replaceAll("[^0-9]", "");
                         if(Integer.parseInt(str) > 0) {
-                            initialize(Integer.parseInt(str));
+                            initialize(Integer.parseInt(str), out);
                         }
                     }
 
@@ -78,7 +80,7 @@ public class UACentralServer {
             }
         }
 
-        public void initialize(int nums) {
+        public void initialize(int nums, PrintWriter out) {
             int roomsPerServ = nums/serverList.size();
             for(Socket servSock : serverList) {
                 try {
