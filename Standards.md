@@ -31,7 +31,7 @@
 | **FR_REQ {Client’s ID}**  | If found vacant fitting room, respond with “{Room Number} ALLOC”. <br> Else if there’s seats in the waiting room, respond with: “WAIT {X}”. X is in seconds. <br> Else respond: “NO” |
 | **FR_EXIT {Client’s ID}** | “{Client’s ID} EJECTED”                                                                                                                                                              |
 | **WR_EXIT {Client’s ID}** | “{Client’s ID} EJECTED”                                                                                                                                                              |
-| **GET FR**                | “FR {X}”. <br> X is the number of fitting rooms available                                                                                                                            |
-| **GET WR**                | “WR {X}”. <br> X is the number of waiting seats available                                                                                                                            |
-| **GET NEXT_AVAIL**        | “AVAIL {X}”. <br> X (Seconds) is the earliest time until there’s a vacant fitting room.                                                                                              |
+| **GET_FR**                | “FR {X}”. <br> X is the number of fitting rooms available                                                                                                                            |
+| **GET_WR**                | “WR {X}”. <br> X is the number of waiting seats available                                                                                                                            |
+| **GET_NEXT_AVAIL**        | “AVAIL {X}”. <br> X (Seconds) is the earliest time until there’s a vacant fitting room.                                                                                              |
 | **SERVER**                | Initial server message to indicate a server.                                                                                                                                         |
