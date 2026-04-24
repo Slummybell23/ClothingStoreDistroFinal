@@ -71,6 +71,15 @@ public class UACentralServer {
                         if(line.contains("CLIENT")) {
                             clientList.add(clientSocket);
                         }
+
+                        if(line.contains("FR_REQ")) {
+
+
+
+                        }
+
+
+
                     }
                 }
 
